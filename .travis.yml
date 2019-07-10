@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t andnig/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true andnig/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t andnig/multi-client ./client
+  - docker build -t andnig/multi-nginx ./nginx
+  - docker build -t andnig/multi-server ./server
+  - docker build -t andnig/multi-worker ./worker
+  # log in to docker cli
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # take those images to docker hub
+  - docker push andnig/multi-client
+  - docker push andnig/multi-nginx
+  - docker push andnig/multi-server
+  - docker push andnig/multi-worker
