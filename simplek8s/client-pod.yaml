@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: client-pod
+  labels: 
+  # this is a key value pair which is used for the networking service to identify
+  # which Pod it should network
+    component: web
+spec:
+  containers:
+    - name: client
+      image: andnig/multi-worker
+      ports:
+        - containerPort: 9999
